@@ -45,18 +45,20 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
   
   return (
     <>
-      {/* Hamburger Button */}
-      <button 
-        className="fixed top-4 right-4 z-50 p-3 glass-card rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-colors"
-        onClick={toggleMenu}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-      >
-        {isOpen ? (
-          <X className="h-6 w-6 text-white" />
-        ) : (
-          <Menu className="h-6 w-6 text-white" />
-        )}
-      </button>
+      {/* Hamburger Button - Always visible in mobile mode */}
+      {isMobile && (
+        <button 
+          className="fixed top-4 right-4 z-50 p-3 glass-card rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-colors"
+          onClick={toggleMenu}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+        >
+          {isOpen ? (
+            <X className="h-6 w-6 text-white" />
+          ) : (
+            <Menu className="h-6 w-6 text-white" />
+          )}
+        </button>
+      )}
       
       {/* Menu Overlay */}
       <div 
