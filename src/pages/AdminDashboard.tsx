@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Phone, getAllPhones } from '@/data/phonesData';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,6 +13,16 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { admin, permissions, isLoading, logout } = useAdminAuth();
   const [phones, setPhones] = useState<Phone[]>([]);
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState('phones');
+  
+  // Set the active tab based on URL parameter, if present
+  useEffect(() => {
+    if (tabFromUrl === 'phones' || tabFromUrl === 'admins') {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
   
   useEffect(() => {
     if (!isLoading && !admin) {
@@ -71,7 +81,7 @@ const AdminDashboard = () => {
         </div>
       </div>
       
-      <Tabs defaultValue="phones" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 max-w-md mx-auto mb-8">
           <TabsTrigger value="phones" className="data-[state=active]:text-neon-blue">Manage Phones</TabsTrigger>
           {permissions.viewAdmins && (

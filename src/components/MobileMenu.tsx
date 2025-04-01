@@ -1,7 +1,9 @@
 
 import React, { useState, useEffect } from "react";
-import { X, Menu, Smartphone, LineChart, Download, Info } from "lucide-react";
+import { X, Menu, Smartphone, LineChart, Download, Info, Users, Settings } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 interface MobileMenuProps {
   onInstallClick: () => void;
@@ -10,6 +12,7 @@ interface MobileMenuProps {
 const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { admin } = useAdminAuth();
   
   // Close menu when switching to desktop view
   useEffect(() => {
@@ -36,11 +39,26 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
     setIsOpen(!isOpen);
   };
   
-  const menuLinks = [
+  // Regular menu links for all users
+  const regularLinks = [
     { name: "Phones", icon: <Smartphone className="h-5 w-5" />, href: "#phones" },
     { name: "Compare", icon: <LineChart className="h-5 w-5" />, href: "#compare" },
     { name: "Install Database", icon: <Download className="h-5 w-5" />, onClick: onInstallClick },
     { name: "About", icon: <Info className="h-5 w-5" />, href: "#about" }
+  ];
+  
+  // Admin links - only visible when logged in as admin
+  const adminLinks = admin ? [
+    { name: "Admin Dashboard", icon: <Settings className="h-5 w-5" />, href: "/admin/dashboard" },
+    { name: "Phone Management", icon: <Smartphone className="h-5 w-5" />, href: "/admin/dashboard?tab=phones" }
+  ] : [];
+  
+  // Combine all links, with a login link if not logged in
+  const menuLinks = [
+    ...regularLinks,
+    ...adminLinks,
+    // Add login link if not logged in
+    ...(admin ? [] : [{ name: "Admin Login", icon: <Users className="h-5 w-5" />, href: "/admin/login" }])
   ];
   
   return (
@@ -93,8 +111,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
                     </span>
                   </button>
                 ) : (
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-3 text-xl group"
                   >
@@ -104,7 +122,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
                     <span className="group-hover:text-neon-blue transition-colors">
                       {link.name}
                     </span>
-                  </a>
+                  </Link>
                 )}
               </li>
             ))}
@@ -118,8 +136,8 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
           <div className="container mx-auto py-4 flex justify-between items-center">
             <a href="#" className="text-2xl font-bold neon-text">ModernMobile</a>
             <nav>
-              <ul className="flex items-center gap-8">
-                {menuLinks.map((link, index) => (
+              <ul className="flex items-center gap-6">
+                {regularLinks.map((link, index) => (
                   <li key={index}>
                     {link.onClick ? (
                       <button 
@@ -140,6 +158,36 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
                     )}
                   </li>
                 ))}
+                
+                {/* Admin section for desktop */}
+                {admin ? (
+                  <>
+                    <li>
+                      <div className="border-l h-6 mx-2 border-white/20"></div>
+                    </li>
+                    {adminLinks.map((link, index) => (
+                      <li key={`admin-${index}`}>
+                        <Link
+                          to={link.href}
+                          className="hover:text-neon-purple transition-colors flex items-center gap-2"
+                        >
+                          {link.icon}
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </>
+                ) : (
+                  <li>
+                    <Link
+                      to="/admin/login"
+                      className="hover:text-neon-purple transition-colors flex items-center gap-2"
+                    >
+                      <Users className="h-5 w-5" />
+                      Admin Login
+                    </Link>
+                  </li>
+                )}
               </ul>
             </nav>
           </div>
