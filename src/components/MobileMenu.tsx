@@ -31,7 +31,10 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
     };
   }, [isOpen, isMobile]);
   
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => {
+    console.log("Toggling menu, current state:", isOpen);
+    setIsOpen(!isOpen);
+  };
   
   const menuLinks = [
     { name: "Phones", icon: <Smartphone className="h-5 w-5" />, href: "#phones" },
@@ -44,18 +47,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
     <>
       {/* Hamburger Button */}
       <button 
-        className="fixed top-4 right-4 z-50 p-3 glass-card rounded-full"
+        className="fixed top-4 right-4 z-50 p-3 glass-card rounded-full bg-black/30 backdrop-blur-md border border-white/10 hover:bg-black/40 transition-colors"
         onClick={toggleMenu}
         aria-label={isOpen ? "Close menu" : "Open menu"}
       >
         {isOpen ? (
           <X className="h-6 w-6 text-white" />
         ) : (
-          <div className="flex flex-col gap-1.5 justify-center items-center">
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-            <span className="hamburger-line"></span>
-          </div>
+          <Menu className="h-6 w-6 text-white" />
         )}
       </button>
       
