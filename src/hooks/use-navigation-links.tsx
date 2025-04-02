@@ -3,6 +3,7 @@ import React from "react";
 import { Smartphone, LineChart, Download, Info, Users, Settings } from "lucide-react";
 import { MenuLink } from "@/types/navigation";
 import { Admin } from "@/data/phonesData";
+import { isDatabaseInstalled } from "@/lib/databaseStatus";
 
 interface UseNavigationLinksProps {
   admin: Admin | null;
@@ -13,15 +14,21 @@ export const useNavigationLinks = ({
   admin,
   onInstallClick
 }: UseNavigationLinksProps) => {
+  // Check if database is installed
+  const dbInstalled = isDatabaseInstalled();
+  
   // Regular menu links for all users
   const regularLinks: MenuLink[] = [
     { name: "Phones", icon: <Smartphone className="h-5 w-5" />, href: "#phones" },
     { name: "Compare", icon: <LineChart className="h-5 w-5" />, href: "#compare" },
-    { 
-      name: "Install Database", 
-      icon: <Download className="h-5 w-5" />, 
-      onClick: onInstallClick 
-    },
+    // Only show install database if not installed
+    ...(dbInstalled ? [] : [
+      { 
+        name: "Install Database", 
+        icon: <Download className="h-5 w-5" />, 
+        onClick: onInstallClick 
+      }
+    ]),
     { name: "About", icon: <Info className="h-5 w-5" />, href: "#about" }
   ];
   

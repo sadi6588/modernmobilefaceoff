@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { getAllPhones, Phone } from "@/data/phonesData";
 import { mockInstallDatabase } from "@/lib/mockInstall";
+import { markDatabaseAsInstalled } from "@/lib/databaseStatus";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileMenu from "@/components/MobileMenu";
@@ -50,6 +51,9 @@ const Index = () => {
       });
       
       if (result.success) {
+        // Mark database as installed
+        markDatabaseAsInstalled();
+        
         toast({
           title: "Installation Complete",
           description: "Database installed successfully!",
