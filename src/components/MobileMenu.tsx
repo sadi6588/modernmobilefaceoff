@@ -5,6 +5,24 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 
+// Define proper types for our menu links
+interface BaseMenuLink {
+  name: string;
+  icon: React.ReactNode;
+}
+
+interface ClickableMenuLink extends BaseMenuLink {
+  onClick: () => void;
+  href?: never; // Ensure onClick and href are mutually exclusive
+}
+
+interface NavigationMenuLink extends BaseMenuLink {
+  href: string;
+  onClick?: never; // Ensure onClick and href are mutually exclusive
+}
+
+type MenuLink = ClickableMenuLink | NavigationMenuLink;
+
 interface MobileMenuProps {
   onInstallClick: () => void;
 }
@@ -40,26 +58,35 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
   };
   
   // Regular menu links for all users
-  const regularLinks = [
+  const regularLinks: MenuLink[] = [
     { name: "Phones", icon: <Smartphone className="h-5 w-5" />, href: "#phones" },
     { name: "Compare", icon: <LineChart className="h-5 w-5" />, href: "#compare" },
-    { name: "Install Database", icon: <Download className="h-5 w-5" />, onClick: onInstallClick },
+    { 
+      name: "Install Database", 
+      icon: <Download className="h-5 w-5" />, 
+      onClick: onInstallClick 
+    },
     { name: "About", icon: <Info className="h-5 w-5" />, href: "#about" }
   ];
   
   // Admin links - only visible when logged in as admin
-  const adminLinks = admin ? [
+  const adminLinks: MenuLink[] = admin ? [
     { name: "Admin Dashboard", icon: <Settings className="h-5 w-5" />, href: "/admin/dashboard" },
     { name: "Phone Management", icon: <Smartphone className="h-5 w-5" />, href: "/admin/dashboard?tab=phones" }
   ] : [];
   
   // Combine all links, with a login link if not logged in
-  const menuLinks = [
+  const menuLinks: MenuLink[] = [
     ...regularLinks,
     ...adminLinks,
     // Add login link if not logged in
     ...(admin ? [] : [{ name: "Admin Login", icon: <Users className="h-5 w-5" />, href: "/admin/login" }])
   ];
+  
+  // Helper function to check if a link is clickable (has onClick handler)
+  const isClickableLink = (link: MenuLink): link is ClickableMenuLink => {
+    return 'onClick' in link;
+  };
   
   return (
     <>
@@ -95,7 +122,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
                   animationFillMode: "forwards"
                 }}
               >
-                {link.onClick ? (
+                {isClickableLink(link) ? (
                   <button 
                     onClick={() => {
                       link.onClick();
@@ -139,7 +166,7 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ onInstallClick }) => {
               <ul className="flex items-center gap-6">
                 {regularLinks.map((link, index) => (
                   <li key={index}>
-                    {link.onClick ? (
+                    {isClickableLink(link) ? (
                       <button 
                         onClick={link.onClick}
                         className="hover:text-neon-blue transition-colors flex items-center gap-2"
