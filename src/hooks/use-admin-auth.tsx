@@ -93,11 +93,41 @@ export const useAdminAuth = () => {
     });
   };
   
+  // Add resetAdmin function to clear session and storage
+  const resetAdmin = () => {
+    localStorage.removeItem('adminSession');
+    localStorage.removeItem('adminResetRequested');
+    setAdmin(null);
+    setPermissions({
+      addPhone: false,
+      deletePhone: false,
+      editPhone: false,
+      viewAdmins: false,
+      manageAdmins: false
+    });
+  };
+  
+  // Request a reset (this would typically trigger an email in a real app)
+  const requestReset = (username: string): boolean => {
+    // In a real application, this would send an email with a reset link
+    // For our demo, we'll just store that a reset was requested
+    localStorage.setItem('adminResetRequested', username);
+    return true;
+  };
+  
+  // Check if a reset was requested for the given username
+  const isResetRequested = (username: string): boolean => {
+    return localStorage.getItem('adminResetRequested') === username;
+  };
+  
   return {
     admin,
     isLoading,
     permissions,
     checkAdminSession,
-    logout
+    logout,
+    resetAdmin,
+    requestReset,
+    isResetRequested
   };
 };
