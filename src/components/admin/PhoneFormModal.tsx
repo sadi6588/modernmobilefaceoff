@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -104,6 +104,9 @@ const PhoneFormModal: React.FC<PhoneFormModalProps> = ({
       <DialogContent className="glass sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-neon-blue">{title}</DialogTitle>
+          <DialogDescription>
+            Fill in the details of the phone you want to add.
+          </DialogDescription>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6">
