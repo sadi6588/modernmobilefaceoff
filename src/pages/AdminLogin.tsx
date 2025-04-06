@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "@/hooks/use-toast";
@@ -11,8 +10,8 @@ import { useAdminAuth } from '@/hooks/use-admin-auth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('superadmin');
+  const [password, setPassword] = useState('admin');
   const [step, setStep] = useState(1);
   const [activeTab, setActiveTab] = useState('login');
   const navigate = useNavigate();
@@ -49,7 +48,6 @@ const AdminLogin = () => {
       return;
     }
     
-    // Request password reset
     requestReset(username);
     
     toast({
@@ -57,7 +55,6 @@ const AdminLogin = () => {
       description: "If your account exists, you'll receive reset instructions",
     });
     
-    // Move to the reset confirmation tab
     setActiveTab('resetConfirm');
   };
 
@@ -178,9 +175,7 @@ const OtpVerification = ({ username }: { username: string }) => {
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // For demo purposes, accepting "123456" as valid OTP
     if (otp === "123456") {
-      // Store admin session in localStorage
       localStorage.setItem('adminSession', JSON.stringify({ 
         username,
         authenticated: true,
@@ -193,7 +188,6 @@ const OtpVerification = ({ username }: { username: string }) => {
         description: "Welcome to the admin panel",
       });
       
-      // If this was a reset login, clear the reset flag
       if (isResetRequested(username)) {
         localStorage.removeItem('adminResetRequested');
       }
