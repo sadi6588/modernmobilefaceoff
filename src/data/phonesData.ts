@@ -1,4 +1,3 @@
-
 export interface PhoneSpec {
   name: string;
   value: string | number;
@@ -120,7 +119,12 @@ export const comparePhones = (phone1Id: string, phone2Id: string) => {
 
 // Phone CRUD operations
 export const addPhone = (phone: Phone): Phone => {
+  // Ensure the phone has a valid ID
+  if (!phone.id) {
+    phone.id = `${phone.brand.toLowerCase()}-${phone.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
+  }
   phones = [...phones, phone];
+  console.log("Phone added:", phone);
   return phone;
 };
 
@@ -134,13 +138,23 @@ export const updatePhone = (updatedPhone: Phone): Phone | null => {
     ...phones.slice(index + 1)
   ];
   
+  console.log("Phone updated:", updatedPhone);
   return updatedPhone;
 };
 
 export const deletePhone = (id: string): boolean => {
+  console.log("Attempting to delete phone with id:", id);
   const initialLength = phones.length;
   phones = phones.filter(phone => phone.id !== id);
-  return phones.length < initialLength;
+  const success = phones.length < initialLength;
+  
+  if (success) {
+    console.log("Phone deleted successfully");
+  } else {
+    console.log("Phone deletion failed, phone not found");
+  }
+  
+  return success;
 };
 
 // Admin authentication and management

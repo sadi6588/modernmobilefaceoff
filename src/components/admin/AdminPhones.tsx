@@ -17,6 +17,7 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [phoneToEdit, setPhoneToEdit] = useState<Phone | null>(null);
+  const [localPhones, setLocalPhones] = useState<Phone[]>(phones);
 
   const handleDelete = (id: string) => {
     if (!permissions.deletePhone) {
@@ -31,12 +32,13 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
     if (confirm("Are you sure you want to delete this phone?")) {
       const success = deletePhone(id);
       if (success) {
+        // Update local state to reflect the deletion
+        setLocalPhones(prevPhones => prevPhones.filter(phone => phone.id !== id));
+        
         toast({
           title: "Phone deleted",
           description: "The phone has been successfully deleted"
         });
-        // In a real app, we would use state management to update the UI
-        window.location.reload(); // Simple refresh for demo
       } else {
         toast({
           variant: "destructive",
@@ -77,13 +79,14 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
   const handleSaveNew = (newPhone: Phone) => {
     const result = addPhone(newPhone);
     if (result) {
+      // Update local state with the new phone
+      setLocalPhones(prevPhones => [...prevPhones, newPhone]);
+      
       toast({
         title: "Phone added",
         description: "The phone has been successfully added"
       });
       setShowAddModal(false);
-      // In a real app, we would use state management to update the UI
-      window.location.reload(); // Simple refresh for demo
     } else {
       toast({
         variant: "destructive",
@@ -96,14 +99,17 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
   const handleSaveEdit = (editedPhone: Phone) => {
     const result = updatePhone(editedPhone);
     if (result) {
+      // Update local state with the edited phone
+      setLocalPhones(prevPhones => 
+        prevPhones.map(phone => phone.id === editedPhone.id ? editedPhone : phone)
+      );
+      
       toast({
         title: "Phone updated",
         description: "The phone has been successfully updated"
       });
       setShowEditModal(false);
       setPhoneToEdit(null);
-      // In a real app, we would use state management to update the UI
-      window.location.reload(); // Simple refresh for demo
     } else {
       toast({
         variant: "destructive",
@@ -113,6 +119,7 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
     }
   };
 
+  // Use localPhones for rendering instead of the props phones
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -136,7 +143,7 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {phones.map((phone) => (
+            {localPhones.map((phone) => (
               <TableRow key={phone.id} className="hover:bg-white/5">
                 <TableCell className="font-medium flex items-center gap-2">
                   <Smartphone size={16} className="text-neon-blue" />
@@ -168,7 +175,7 @@ const AdminPhones: React.FC<AdminPhonesProps> = ({ phones, permissions }) => {
                 </TableCell>
               </TableRow>
             ))}
-            {phones.length === 0 && (
+            {localPhones.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8 text-white/60">
                   No phones found. Add a new phone to get started.

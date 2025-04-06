@@ -93,7 +93,7 @@ const PhoneFormModal: React.FC<PhoneFormModalProps> = ({
     // Generate ID if it's a new phone
     const phoneToSave: Phone = {
       ...formData,
-      id: formData.id || formData.name.toLowerCase().replace(/\s+/g, '-')
+      id: formData.id || `${formData.brand.toLowerCase()}-${formData.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`
     };
     
     onSave(phoneToSave);
